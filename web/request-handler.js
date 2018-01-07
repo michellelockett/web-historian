@@ -7,7 +7,7 @@ var qs = require('querystring');
 exports.handleRequest = function (req, res) {
   var filePath = archive.paths.archivedSites + req.url;
 
-  if (req.url == '/') {
+  if (req.url === '/') {
     filePath = archive.paths.siteAssets + '/index.html';
   }
 
@@ -36,8 +36,8 @@ exports.handleRequest = function (req, res) {
       archive.addUrlToList(postData.url, function(err) {
         if (err) { throw err; }
 
-        res.writeHead(302)
-        res.end()
+        res.writeHead(302);
+        res.end();
       });
     });
   }

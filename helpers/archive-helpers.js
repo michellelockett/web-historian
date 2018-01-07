@@ -58,7 +58,7 @@ exports.downloadUrls = function(urls) {
 
   for (var i = 0; i < urls.length; i++) {
     var currentUrl = urls[i];
-    var filepath = exports.paths.archivedSites + "/" + currentUrl;
+    var filepath = exports.paths.archivedSites + '/' + currentUrl;
 
     exports.isUrlArchived(currentUrl, function(isArchived) {
       if (!isArchived) {
