@@ -28,7 +28,7 @@ exports.initialize = function(pathsObj) {
 
 exports.readListOfUrls = function(callback) {
   fs.readFile(exports.paths.list, function(err, data) {
-    if (err) throw err;
+    if (err) { throw err; }
 
     var splitData = data.toString().split('\n');
 
@@ -56,21 +56,28 @@ exports.isUrlArchived = function(url, callback) {
 
 exports.downloadUrls = function(urls) {
 
+  for (var i = 0; i < urls.length; i++) {
+    var currentUrl = urls[i];
+    var filepath = exports.paths.archivedSites + "/" + currentUrl;
+
+    exports.isUrlArchived(currentUrl, function(isArchived) {
+      if (!isArchived) {
+        var url = 'http://' + currentUrl;
+
+        http.get(url, res => {
+          let body = '';
+
+          res.on('data', data => {
+            body += data;
+          });
+
+          res.on('end', () => {
+            fs.writeFile(filepath, body, function(err) {
+              if (err) { throw err; }
+            });
+          });
+        });
+      }
+    });
+  }
 };
-
-function getUrl() {
-  http.get('http://www.google.com', res => {
-    let body = '';
-
-    res.on('data', data => {
-      body += data;
-    });
-
-    res.on('end', () => {
-      // body = JSON.parse(body);
-      console.log(body);;
-    });
-  });
-}
-
-getUrl()
