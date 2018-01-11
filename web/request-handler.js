@@ -39,8 +39,8 @@ exports.handleRequest = function (req, res) {
 
     req.on('end', function() {
       var postData = qs.parse(body);
-      var url = postData.url
-      var location = '/loading'
+      var url = postData.url;
+      var location = '/loading';
       console.log(postData);
 
       archive.isUrlArchived(url, function(isArchived) {
@@ -52,7 +52,7 @@ exports.handleRequest = function (req, res) {
           archive.addUrlToList(url, function(err) {
             if (err) { throw err; }
 
-            res.writeHead(302, { 'Location' : location });
+            res.writeHead(302, { 'Location': location });
             res.end();
 
             archive.readListOfUrls(function(list) {
