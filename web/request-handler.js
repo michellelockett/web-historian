@@ -15,11 +15,7 @@ exports.handleRequest = function (req, res) {
     filePath = archive.paths.siteAssets + '/loading.html';
   } else {
     filePath = archive.paths.archivedSites + '/' + req.url;
-<<<<<<< HEAD
   }
-=======
-  } 
->>>>>>> 9d97fdf075082e9f32bddf98e1b258427254b71d
 
   if (req.method === 'GET') {
 
@@ -46,7 +42,6 @@ exports.handleRequest = function (req, res) {
       var url = postData.url;
       var location = '/loading';
       console.log(postData);
-<<<<<<< HEAD
 
       archive.isUrlArchived(url).then(function(isArchived) {
 
@@ -65,28 +60,6 @@ exports.handleRequest = function (req, res) {
         res.writeHead(302, { 'Location': location });
         res.end();
       });
-=======
-
-      archive.isUrlArchived(url, function(isArchived) {
-        if (isArchived) {
-          location = url;
-          res.writeHead(302, { 'Location': location });
-          res.end();
-        } else {
-          archive.addUrlToList(url, function(err) {
-            if (err) { throw err; }
-
-            res.writeHead(302, { 'Location': location });
-            res.end();
-
-            archive.readListOfUrls(function(list) {
-              console.log(list);
-            });
-            console.log('successful post');
-          });
-        }
-      });     
->>>>>>> 9d97fdf075082e9f32bddf98e1b258427254b71d
     });
   }
 };
