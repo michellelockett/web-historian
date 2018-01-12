@@ -2,8 +2,12 @@ var Promise = require('bluebird');
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
+<<<<<<< HEAD
 var http = require('http');
 var dns = require('dns');
+=======
+var https = require('https');
+>>>>>>> 9d97fdf075082e9f32bddf98e1b258427254b71d
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -33,7 +37,11 @@ exports.readListOfUrls = function() {
     fs.readFile(exports.paths.list, function(err, data) {
       if (err) { return reject(err); }
 
+<<<<<<< HEAD
       var splitData = data.toString().trim().split('\n');
+=======
+    var splitData = data.toString().trim().split('\n');
+>>>>>>> 9d97fdf075082e9f32bddf98e1b258427254b71d
 
       resolve(splitData);
     });
@@ -58,6 +66,7 @@ exports.addUrlToList = function(url) {
   });
 };
 
+<<<<<<< HEAD
 exports.isUrlArchived = function(url) {
   return new Promise(function(resolve, reject) {
     fs.readdir(exports.paths.archivedSites, function(err, files) {
@@ -109,11 +118,17 @@ exports.fetchHtml = function(url) {
     }).on('error', function(err) {
       reject(err);
     });
+=======
+exports.isUrlArchived = (url, callback) => {
+  fs.readdir(exports.paths.archivedSites, function(err, files) {
+    callback(files.includes(url));
+>>>>>>> 9d97fdf075082e9f32bddf98e1b258427254b71d
   });
 };
 
 exports.downloadUrls = function(urls) {
   if (urls[0] === '') { return; }
+<<<<<<< HEAD
 
   for (var i = 0; i < urls.length; i++) {
     const currentUrl = urls[i];
@@ -127,7 +142,35 @@ exports.downloadUrls = function(urls) {
           fs.writeFile(filepath, body, function(err) {
             console.log('writing to: ', filepath);
             if (err) { throw err; }
+=======
+  
+  for (var i = 0; i < urls.length; i++) {
+    const currentUrl = urls[i];
+    
+    exports.isUrlArchived(currentUrl, function(isArchived) {
+
+      var filepath = exports.paths.archivedSites + '/' + currentUrl;
+
+      if (!isArchived) {
+      
+        var url = 'https://' + currentUrl;
+
+        https.get(url, res => {
+          let body = '';
+
+          res.on('data', data => {
+            body += data;
           });
+
+          res.on('end', () => {
+            fs.writeFile(filepath, body, function(err) {
+              console.log('writing to: ', filepath);
+              if (err) { throw err; }
+            });
+>>>>>>> 9d97fdf075082e9f32bddf98e1b258427254b71d
+          });
+        }).on('error', function(err) {
+          console.log(err);
         });
       }
     });
