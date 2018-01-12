@@ -9,9 +9,16 @@ exports.handleRequest = function (req, res) {
 
   if (req.url === '/') {
     filePath = archive.paths.siteAssets + '/index.html';
+  } else if (req.url === '/styles.css') {
+    filePath = archive.paths.siteAssets + '/styles.css';
+  } else if (req.url === '/loading') {
+    filePath = archive.paths.siteAssets + '/loading.html';
+  } else {
+    filePath = archive.paths.archivedSites + '/' + req.url;
   }
 
   if (req.method === 'GET') {
+
     fs.readFile(filePath, function(err, html) {
       if (err) {
         res.writeHead(404);
@@ -32,11 +39,25 @@ exports.handleRequest = function (req, res) {
 
     req.on('end', function() {
       var postData = qs.parse(body);
+      var url = postData.url;
+      var location = '/loading';
+      console.log(postData);
 
-      archive.addUrlToList(postData.url, function(err) {
-        if (err) { throw err; }
+      archive.isUrlArchived(url).then(function(isArchived) {
 
-        res.writeHead(302);
+        if (isArchived) {
+          location = url;
+        } else {
+          console.log('adding url to list')
+          return archive.addUrlToList(url);
+        }
+
+            // archive.readListOfUrls(function(list) {
+            //   console.log(list);
+            // });
+            // console.log('successful post');
+      }).then(function() {
+        res.writeHead(302, { 'Location': location });
         res.end();
       });
     });

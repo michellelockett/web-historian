@@ -82,7 +82,7 @@ describe('archive helpers', function() {
       var urlArray = ['example1.com', 'example2.com'];
       fs.writeFileSync(archive.paths.list, urlArray.join('\n'));
 
-      archive.readListOfUrls(function(urls) {
+      archive.readListOfUrls().then(function(urls) {
         expect(urls).to.deep.equal(urlArray);
         done();
       });
@@ -97,12 +97,12 @@ describe('archive helpers', function() {
       var counter = 0;
       var total = 2;
 
-      archive.isUrlInList('example1.com', function (exists) {
+      archive.isUrlInList('example1.com').then(function (exists) {
         expect(exists).to.be.true;
         if (++counter === total) { done(); }
       });
 
-      archive.isUrlInList('gibberish', function (exists) {
+      archive.isUrlInList('gibberish').then(function (exists) {
         expect(exists).to.be.false;
         if (++counter === total) { done(); }
       });
@@ -114,11 +114,11 @@ describe('archive helpers', function() {
       var urlArray = ['example1.com', 'example2.com\n'];
       fs.writeFileSync(archive.paths.list, urlArray.join('\n'));
 
-      archive.addUrlToList('someurl.com', function () {
-        archive.isUrlInList('someurl.com', function (exists) {
+      archive.addUrlToList('someurl.com').then(function () {
+        return archive.isUrlInList('someurl.com');
+      }).then(function (exists) {
           expect(exists).to.be.true;
           done();
-        });
       });
     });
   });
@@ -130,12 +130,12 @@ describe('archive helpers', function() {
       var counter = 0;
       var total = 2;
 
-      archive.isUrlArchived('www.example.com', function (exists) {
+      archive.isUrlArchived('www.example.com').then(function (exists) {
         expect(exists).to.be.true;
         if (++counter === total) { done(); }
       });
 
-      archive.isUrlArchived('www.notarchived.com', function (exists) {
+      archive.isUrlArchived('www.notarchived.com').then(function (exists) {
         expect(exists).to.be.false;
         if (++counter === total) { done(); }
       });
@@ -153,6 +153,31 @@ describe('archive helpers', function() {
         done();
       }, 500);
     });
+
+    it('should remove all urls from list after download,', function(done) {
+      archive.addUrlToList('www.google.com')
+        .then(function() {
+          return archive.readListOfUrls();
+        })
+        .then(function(urls) {
+          return archive.downloadUrls(urls);
+        })
+        .then(function() {
+          return archive.readListOfUrls();
+        })
+        .then(function(urls) {
+          expect(urls[0]).to.equal('');
+          done();
+        });
+    });
+  });
+
+  describe('#getIpAddress', function() {
+    it('should return a valid ip address', function(done) {
+      archive.getIpAddress('www.google.com').then(function(ipAddress) {
+        expect(ipAddress.split('.').length).to.equal(4);
+        done();
+      });
+    });
   });
 });
-
